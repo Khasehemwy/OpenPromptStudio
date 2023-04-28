@@ -22,7 +22,7 @@ app.use(express.json());
 
 // 创建数据库连接
 const connection = mysql.createConnection({
-    host: 'localhost',
+    host: '0.0.0.0',
     user: 'root',
     password: 'pwrd',
     database: 'ai_keyword'

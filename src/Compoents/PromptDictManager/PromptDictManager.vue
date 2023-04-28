@@ -13,7 +13,7 @@
             <option value="eg">subType：负面</option>
         </select>
         <div class="button-container">
-            <button @click="AddItem(true)">添加</button>
+            <button @click="AddItem(true)">添加/更新</button>
             <button @click="RemoveItem(true)">删除（只需要输入Text（关键字））</button>
         </div>
     </div>
@@ -62,6 +62,8 @@ export default Vue.extend( {
             this.showAddDialog = show ?? !this.showAddDialog;
             if (this.showAddDialog) this.needAddDialog = true;
             
+            
+            
             let ret = await this.WriteToDatabase(false);
             
             window.alert(ret);
@@ -83,7 +85,7 @@ export default Vue.extend( {
             let ret = '无响应';
             
             if(!deleteKey){
-                await axios.post('http://localhost:3000/api/dictionary', {
+                await axios.post('http://10.4.76.47:3000/api/dictionary', {
                     Text: this.text,
                     Lang_zh: this.lang_zh,
                     SubType: this.subType,
@@ -104,7 +106,7 @@ export default Vue.extend( {
                 })
             }
             else{
-                await axios.delete('http://localhost:3000/api/dictionary', {
+                await axios.delete('http://10.4.76.47:3000/api/dictionary', {
                     data: {
                         Text: this.text
                     }

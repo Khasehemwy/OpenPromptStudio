@@ -1,6 +1,5 @@
 import { Client } from "@notionhq/client"
 import { cloneDeep } from "lodash"
-import WebOfficeSDK from '../../../../../../web-office-sdk-v1.1.19-a4d86a2/web-office-sdk-v1.1.19.es.js';
 import * as XLSX from "xlsx";
 import axios from "axios";
 
@@ -104,13 +103,13 @@ export async function fetchFromNotion(options: { apiKey: string; databaseId: str
         // }
 
         //从mysql数据库读数据
-        await axios.get('http://localhost:3000/api/dictionary', {
+        await axios.get('http://10.4.76.47:3000/api/dictionary', {
         }).then(response => {
             if (response.status === 200) {
                 console.log("读取 成功");
 
                 let rows = response.data;
-                console.log(rows);
+                // console.log(rows);
                 for (let row of rows) {
                     let text = row.Text;
                     let lang_zh = row.Lang_zh;
@@ -126,7 +125,7 @@ export async function fetchFromNotion(options: { apiKey: string; databaseId: str
                     if (typeof alias === "string") {
                         alias.split(/[,，]/).forEach((text) => {
                             text = text.trim()
-                            if (text != "") {
+                            if (text != "" && text != row.Text) {
                                 let cloneItem = cloneDeep(item)
                                 cloneItem.text = text
                                 ;(cloneItem as any).isAlias = true
@@ -139,6 +138,11 @@ export async function fetchFromNotion(options: { apiKey: string; databaseId: str
                 
             } else if (response.status === 500) {
                 console.log("读取 失败[code: 500]");
+            }
+            console.log(`[data] inside import ${Object.keys(defineMap).length} items.`)
+            //遍历并输出defineMap
+            for (let key in defineMap) {
+                console.log(key, defineMap[key]);
             }
         }).catch(error => {
             console.log("读取 失败");
