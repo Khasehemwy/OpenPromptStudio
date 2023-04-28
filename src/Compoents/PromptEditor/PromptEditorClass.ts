@@ -1,18 +1,10 @@
 import { PromptWork } from "./Sub/PromptWork"
 
-export const LOCAL_TRANSLATE_SERVER = process.env.LOCAL_TRANSLATE_HOST
-    ? `${
-          process.env.LOCAL_TRANSLATE_HOST.startsWith("http")
-              ? process.env.LOCAL_TRANSLATE_HOST
-              : "//" + process.env.LOCAL_TRANSLATE_HOST
-      }/prompt-studio`
-    : "http://localhost:19212/prompt-studio"
-
 export class PromptEditorClass {
     data = {
-        server: location.host.startsWith("moonvy.com")
+        server: location.host.startsWith("localhost")
             ? "https://indexfs.moonvy.com:19213/prompt-studio"
-            : LOCAL_TRANSLATE_SERVER,
+            : "https://indexfs.moonvy.com:19213/prompt-studio",
         enablePngExportFixed: false,
         enablePngExportCopy: false,
     }
@@ -31,7 +23,7 @@ export class PromptEditorClass {
         } else {
             this.works = [
                 new PromptWork({
-                    initText: `apple, forest ::-1 big bad wolf, wood ::2 unreal engine, cinematic lighting, UHD, super detail --aspect 2:3`,
+                    initText: '',
                 }),
                 new PromptWork({
                     // initText: `symmetrical,(PureErosFace_V1:0.8), [:(highly detail face: 1.2):0.1],[to:when],[from::when], [[df]], (((twintails))), <lora:koreanDollLikeness_v10:0.5>`,

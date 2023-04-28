@@ -25,9 +25,7 @@
             <div
                 class="server-select"
                 v-tooltip="
-                    `调用翻译接口会有不小的成本开销，我们做了适当限制\n当同时使用用户过多时会不稳定，请见谅\n想要更好的翻译体验可以在本项目 Github 页获得本地部署的方法\n\n${
-                        promptEditor.data.server === LocalTrasnslateServer ? promptEditor.data.server : ''
-                    }`
+                    `调用翻译接口会有不小的成本开销，我们做了适当限制\n当同时使用用户过多时会不稳定，请见谅\n想要更好的翻译体验可以在本项目 Github 页获得本地部署的方法`
                 "
             >
                 <Icon icon="ic:baseline-g-translate" />
@@ -35,7 +33,7 @@
                     {{ t("翻译服务：") }}
                 </div>
                 <select v-model="promptEditor.data.server">
-                    <option :value="LocalTrasnslateServer" :title="LocalTrasnslateServer">本地翻译接口</option>
+                    <option value="http://localhost:19212/prompt-studio">本地翻译接口</option>
                     <option value="https://indexfs.moonvy.com:19213/prompt-studio">腾讯翻译</option>
                     <option value="https://indexfs.moonvy.com:19213/prompt-studio2">腾讯翻译 2</option>
                     <option value="https://indexfs.moonvy.com:19213/prompt-studio/ai" disabled>
@@ -141,9 +139,9 @@
         </div>
 
         <!--    在使用 indexfs.moonvy.com 的翻译服务时显示广告，尝试给腾讯翻译的服务费回血    -->
-        <div v-if="needShowAd" class="回血-box" v-tooltip="'广告商提供的内容，与本网站（Moonvy 月维）无关'">
-            <a href="https://nf.video/yinhe/web?sharedId=124758" target="_blank"> <img src="./Assets/ad.png" /> </a>
-        </div>
+<!--        <div v-if="needShowAd" class="回血-box" v-tooltip="'广告商提供的内容，与本网站（Moonvy 月维）无关'">-->
+<!--            <a href="https://nf.video/yinhe/web?sharedId=124758" target="_blank"> <img src="./Assets/ad.png" /> </a>-->
+<!--        </div>-->
     </div>
 </template>
 <style lang="scss">
@@ -189,21 +187,18 @@
 }
 </style>
 <script>
-import { LOCAL_TRANSLATE_SERVER, PromptEditorClass } from "./PromptEditorClass"
+import Vue from "vue"
+import { PromptEditorClass } from "./PromptEditorClass"
 import PromptWork from "./Components/PromptWork/PromptWork.vue"
 import { dndInit } from "./Lib/DnD"
 import { useClipboard } from "@vueuse/core"
-let { copy } = useClipboard({ legacy: true })
+let { copy } = useClipboard()
 export default {
     props: ["initPrompts"],
     data() {
         dndInit()
         let promptEditor = new PromptEditorClass({ initPrompts: this.initPrompts })
-        return {
-            LocalTrasnslateServer: LOCAL_TRANSLATE_SERVER,
-            promptEditor,
-            adDelay: false,
-        }
+        return { promptEditor, adDelay: false }
     },
     components: { PromptWork },
     provide() {

@@ -4,8 +4,11 @@
             <a class="logo" href="https://github.com/Moonvy/OpenPromptStudio"><b>OPS</b>/OpenPromptStudio</a>
             <a class="icon-link" href="https://github.com/Moonvy/OpenPromptStudio" target="_blank">
                 <Icon icon="radix-icons:github-logo"
-            /></a>
+            /></a><a class="logo">神魔2自定义版本</a>
 
+            <div class="dict-button-box" @click="toggleDictManager()">
+                管理词典
+            </div>
             <div class="dict-button-box" @click="toggleDictPad()">
                 提示词词典
                 <button class="icon dict-button"><Icon icon="mingcute:book-4-fill" /></button>
@@ -15,7 +18,7 @@
         <section class="PromptDictPad" v-if="needDictPad" v-show="showDictPad">
             <div class="title">
                 <Icon icon="mingcute:book-4-fill" />
-                提示词词典
+                词典
                 <!--                <a class="github-dict" href="https://github.com/Moonvy/OpenPromptStudio" target="_blank">-->
                 <!--                    <Icon icon="radix-icons:github-logo" />一起维护词典</a-->
                 <!--                >-->
@@ -25,11 +28,22 @@
             </div>
             <PromptDict />
         </section>
+        
+        <section class="PromptDictPad" v-if="needDictManager" v-show="showDictManager">
+            <div class="title">
+                <Icon icon="mingcute:book-4-fill"/>
+                词典管理
+                <button class="icon close-button" @click="toggleDictManager(false)">
+                    <Icon icon="radix-icons:cross-1"/>
+                </button>
+            </div>
+            <PromptDictManager/>
+        </section>
         <footer>
             <a href="https://github.com/Moonvy/OpenPromptStudio" target="_blank">
-                <img class="icon" src="/icon.svg" /> OpenPromptStudio / v{{ version }} /
+                <img class="icon" src="/icon.svg" /> 神魔2-OPS 基于（OpenPromptStudio / v{{ version }} /
             </a>
-            <a href="https://moonvy.com/?homepage"> made by <img src="./assets/logo_full_cn.svg" /></a>
+            <a href="https://moonvy.com/?homepage"> made by <img src="./assets/logo_full_cn.svg" />）</a>
         </footer>
     </div>
 </template>
@@ -80,6 +94,17 @@
             right: 20px;
             top: 14px;
             z-index: 50;
+        }
+
+        .dictManager-button-box {
+            margin-left: auto;
+            display: flex;
+            font-size: 14px;
+            place-items: center;
+            color: #6161b7;
+            text-shadow: 0 1px 1px #ffffff;
+            margin-right: 40px;
+            cursor: pointer;
         }
     }
 
@@ -173,11 +198,14 @@ import vPromptEditor from "../../Compoents/PromptEditor/PromptEditor.vue"
 import vPromptDict from "../../Compoents/PromptDict/PromptDict.vue"
 
 import pkg from "../../../package.json"
+import PromptDictManager from "../../Compoents/PromptDictManager/PromptDictManager.vue";
 export default Vue.extend({
     data() {
         return {
             showDictPad: false,
             needDictPad: false,
+            showDictManager: false,
+            needDictManager: false,
             version: pkg.version,
             initPrompts: null,
         }
@@ -186,6 +214,10 @@ export default Vue.extend({
         toggleDictPad(show?: boolean) {
             this.showDictPad = show ?? !this.showDictPad
             if (this.showDictPad) this.needDictPad = true
+        },
+        toggleDictManager(show?: boolean) {
+            this.showDictManager = show ?? !this.showDictPad
+            if (this.showDictManager) this.needDictManager = true
         },
 
         getPromptsFromUrlQuery() {
@@ -205,6 +237,7 @@ export default Vue.extend({
         },
     },
     components: {
+        PromptDictManager,
         PromptEditor: <any>vPromptEditor,
         PromptDict: vPromptDict,
     },

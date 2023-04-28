@@ -4,44 +4,41 @@
         <div class="notion-settings" :class="{ isHoverButton }">
             <button
                 class="notion-me"
-                @click="doGotoNotionMe"
+                @click="reloadData()"
                 @mousemove="setNotionHover(true)"
                 @mouseleave="setNotionHover(false)"
             >
                 <Icon icon="logos:notion-icon" />
-                {{ notionName ?? (loading ? "连接中..." : "连接我的 Notion") }}
+                {{ notionName ?? (loading ? "连接中..." : "连接 WebOffice") }}
             </button>
 
             <div class="notion-config">
                 <div class="help">
-                    <Icon icon="ant-design:question-circle-outlined" />
-                    <a
-                        target="_blank"
-                        href="https://github.com/Moonvy/OpenPromptStudio#2-%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84-noiton-%E9%9B%86%E6%88%90%E6%8F%92%E4%BB%B6integrations"
-                        >使用方法</a
-                    >
+<!--                    <Icon icon="ant-design:question-circle-outlined" />-->
+<!--                    <a-->
+<!--                        target="_blank"-->
+<!--                        href="https://github.com/Moonvy/OpenPromptStudio#2-%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84-noiton-%E9%9B%86%E6%88%90%E6%8F%92%E4%BB%B6integrations"-->
+<!--                        >使用方法</a-->
+<!--                    >-->
                 </div>
                 <div class="line checkbox">
-                    <label for="enableNotion">启用我的 Notion</label>
+                    <label for="enableNotion">启用数据库</label>
                     <input id="enableNotion" v-model="enableMyNotion" type="checkbox" />
                 </div>
-                <div class="line"><label>Integration Token</label> <input v-model="apiKey" type="text" /></div>
-                <div class="line" v-tooltip="databaseId">
-                    <label>Database ID </label> <input v-model="input_databaseId" type="text" />
-                </div>
-
-                <div class="line checkbox">
-                    <label for="onlyMyNotion">仅使用此数据库 </label>
-                    <input id="onlyMyNotion" v-model="onlyMyNotion" type="checkbox" />
-                    <div class="desc">忽略默认词典</div>
-                </div>
+<!--                <div class="line"><label>Integration Token</label> <input v-model="apiKey" type="text" /></div>-->
+<!--                <div class="line"><label>Database ID </label> <input v-model="databaseId" type="text" /></div>-->
+<!--                <div class="line checkbox">-->
+<!--                    <label for="onlyMyNotion">仅使用此数据库 </label>-->
+<!--                    <input id="onlyMyNotion" v-model="onlyMyNotion" type="checkbox" />-->
+<!--                    <div class="desc">忽略默认词典</div>-->
+<!--                </div>-->
                 <div class="line buttons">
                     <button
                         class="full"
                         :class="{ disabled: !notioConfigActive || loading || !enableMyNotion }"
                         @click="reloadData()"
                     >
-                        {{ loading ? "载入中..." : "载入" }}
+                        {{ loading ? "载入中..." : "刷新" }}
                     </button>
                 </div>
             </div>
@@ -55,7 +52,7 @@
 
         <div class="active-dir" v-if="activeDir">
             <details class="sub-dir" v-for="subDir in activeSubDirs" open :key="subDir.name">
-                <summary class="name" v-show="subDir.name != activeDir.name">
+                <summary class="name" v-show="subDir.name != activeDir.name" >
                     <span class="title">{{ subDir.name }}</span>
                     <span class="len">{{ subDir.words.length }}</span>
                 </summary>
@@ -129,10 +126,12 @@
                 font-size: 12px;
                 font-weight: normal;
                 font-family: "JetBrains Mono";
+
             }
 
             &::marker {
                 color: rgba(126, 126, 126, 0.5);
+
             }
         }
         .list {
@@ -260,53 +259,50 @@
     }
 }
 </style>
-<script>
-import { getDictData } from "./getDictData"
+<script lang="ts">
+import Vue, { PropType } from "vue"
+import { getDictData, IDictDir } from "./getDictData"
 import vPromptItem from "../../Compoents/PromptEditor/Components/PromptItem/PromptItem.vue"
+import { PromptItem } from "../PromptEditor/Sub/PromptItem"
 import { useDatabaseServer } from "../PromptEditor/Lib/DatabaseServer/DatabaseServer"
 import { useStorage } from "@vueuse/core"
 import { debounce } from "lodash"
 
-const apiKey = useStorage("ops-notion-apiKey", "")
-const databaseId = useStorage("ops-notion-databaseId", "")
+const apiKey = useStorage<string>("ops-notion-apiKey", "")
+const databaseId = useStorage<string>("ops-notion-databaseId", "")
 const onlyMyNotion = useStorage("ops-notion-onlyMyNotion", false)
 const enableMyNotion = useStorage("ops-notion-enableMyNotion", true)
 
-export default {
+export default Vue.extend({
     data() {
         return {
-            dict: null,
-            activeDir: null,
+            dict: <IDictDir[] | null>null,
+            activeDir: <IDictDir | null>null,
             apiKey,
             databaseId,
-            input_databaseId: databaseId.value,
             onlyMyNotion,
             enableMyNotion,
-            notionName: null,
-            notionUrl: null,
+            notionName: <string | null>null,
+            notionUrl: <string | null>null,
             loading: false,
             isHoverButton: false,
         }
     },
     watch: {
-        input_databaseId: {
-            handler(val) {
-                if (val.startsWith("https://")) {
-                    let re = /\/([0-9a-f]{32})/.exec(val)
-                    if (re?.[1]?.length == 32) {
-                        let databaseId = re?.[1]
-                        console.log("found databaseId", databaseId, re)
-                        this.input_databaseId = databaseId
-                    } else {
-                        this.input_databaseId = ""
-                    }
+        databaseId(val: string) {
+            if (val.startsWith("https://")) {
+                let re = /\/([0-9a-f]{32})/.exec(val)
+                if (re?.[1]?.length == 32) {
+                    let databaseId = re?.[1]
+                    ;(this as any).databaseId = databaseId
                 } else {
-                    if (val && val.length != 32) {
-                        this.input_databaseId = ""
-                    }
+                    ;(this as any).databaseId = ""
                 }
-                this.databaseId = val
-            },
+            } else {
+                if (val && val.length != 32) {
+                    ;(this as any).databaseId = ""
+                }
+            }
         },
     },
     created() {
@@ -320,8 +316,8 @@ export default {
     methods: {
         loadData() {
             getDictData(onlyMyNotion.value).then((dict) => {
-                this.dict = dict
-                this.activeDir = dict[0]
+                ;(<any>this).dict = dict
+                ;(<any>this).activeDir = dict[0]
             })
         },
 
@@ -359,8 +355,8 @@ export default {
             }
         },
 
-        async doApplyWord(item) {
-            let activeInputEl = document.body.querySelector(".PromptWork.active")
+        async doApplyWord(item: PromptItem) {
+            let activeInputEl: any = document.body.querySelector(".PromptWork.active")
             if (!activeInputEl) activeInputEl = document.body.querySelector(".PromptWork")
             // console.log("activeInputEl", activeInputEl)
 
@@ -372,7 +368,7 @@ export default {
             }
         },
 
-        doChangeActiveDir(dir) {
+        doChangeActiveDir(dir: any) {
             this.activeDir = dir
         },
 
@@ -380,7 +376,7 @@ export default {
             if (this.notionUrl) window.open(this.notionUrl)
         },
 
-        setNotionHover: debounce(function (v) {
+        setNotionHover: debounce(function (this: any, v: boolean) {
             this.isHoverButton = v
         }, 400),
     },
@@ -394,8 +390,8 @@ export default {
         },
 
         notioConfigActive() {
-            return !!(this.databaseId && this.apiKey)
+            return true
         },
     },
-}
+})
 </script>

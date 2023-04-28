@@ -1,0 +1,107 @@
+import { Client } from "@notionhq/client"
+import { cloneDeep } from "lodash"
+import WebOfficeSDK from '../../../../../../web-office-sdk-v1.1.19-a4d86a2/web-office-sdk-v1.1.19.es.js';
+import * as XLSX from "XLSX";
+
+export async function fetchFromNotion(options: { apiKey: string; databaseId: string }) {
+    let { databaseId: database_id, apiKey } = options
+
+    let sheet2arr = function (sheet: any) {
+        let result = [];
+        let row;
+        let rowNum;
+        let colNum;
+        let range = XLSX.utils.decode_range(sheet['!ref']);
+        for (rowNum = range.s.r; rowNum <= range.e.r; rowNum++) {
+            row = [];
+            for (colNum = range.s.c; colNum <= range.e.c; colNum++) {
+                let nextCell = sheet[
+                    XLSX.utils.encode_cell({r: rowNum, c: colNum})
+                    ];
+                if (typeof nextCell === 'undefined') {
+                    row.push(void 0);
+                } else row.push(nextCell.w);
+            }
+            result.push(row);
+        }
+        return result;
+    };
+    
+    let defineMap: any = {}
+    const subTypeMap: any = {
+        普通: "normal",
+        风格: "style",
+        质量: "quality",
+        命令: "command",
+        负面: "eg",
+    }
+    
+    async function once(){
+        const url = "http://127.0.0.1:8887/a.XLSX";
+        const oReq = new XMLHttpRequest();
+        oReq.open("GET", url, true);
+        oReq.responseType = "arraybuffer";
+    
+        console.log(`[XLSX] import xlsx : ${url} .`);
+    
+        oReq.onload = function (e) {
+            let arraybuffer = oReq.response;
+    
+            /* convert data to binary string */
+            let data = new Uint8Array(arraybuffer);
+            let arr = new Array();
+            for (let i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+            let bstr = arr.join("");
+    
+            /* Call XLSX */
+            let workbook = XLSX.read(bstr, {type: "binary"});
+            for (let worksheetIndex = 0; worksheetIndex < workbook.SheetNames.length; worksheetIndex++) {
+    
+                let worksheet = workbook.Sheets[workbook.SheetNames[worksheetIndex]];
+                console.log(`[XLSX] import sheet : ${workbook.SheetNames[worksheetIndex]} .`);
+                console.log(XLSX.utils.sheet_to_json(worksheet, {raw: true}));
+    
+                // iterate every row
+                const sheetArray = sheet2arr(worksheet);
+                for (let row in sheetArray) {
+                    if (row[1] === '!') continue; // if the row is not part of the data, skip
+    
+                    let text = sheetArray[row][0];
+                    let lang_zh = sheetArray[row][1];
+                    let dir = sheetArray[row][2];
+                    let subType = sheetArray[row][3];
+                    let desc = sheetArray[row][4];
+                    let alias = sheetArray[row][5];
+                    let tags = sheetArray[row][6];
+                    console.log(`[XLSX] dir : ${dir} .`);
+                    subType = subTypeMap[subType] ?? "normal"
+                    let item = {text, desc, lang_zh, subType, dir, tags, alias}
+                    if (!text) return
+                    defineMap[item?.text?.toLowerCase()] = item
+                    if (typeof alias === "string") {
+                        alias.split(/[,，]/).forEach((text) => {
+                            text = text.trim()
+                            if (text != "") {
+                                let cloneItem = cloneDeep(item)
+                                cloneItem.text = text
+                                ;(cloneItem as any).isAlias = true
+                                defineMap[text.toLowerCase()] = cloneItem
+                            }
+                        })
+                    }
+                }
+            }
+            console.log(`[XLSX] inside import ${Object.keys(defineMap).length} items.`)
+        }
+        oReq.send();
+    }
+    await once()
+
+
+    console.log(`[XLSX] outside import ${Object.keys(defineMap).length} items.`)
+    let me = {
+        name: "ai keywords xlsx",
+        url: "a.XLSX",
+    }
+    return { defineMap, me }
+}
