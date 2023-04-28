@@ -105,7 +105,9 @@ export default Vue.extend( {
             }
             else{
                 await axios.delete('http://localhost:3000/api/dictionary', {
-                    Text: this.text
+                    data: {
+                        Text: this.text
+                    }
                 }).then(response => {
                     if (response.status === 200) {
                         console.log("删除 成功");

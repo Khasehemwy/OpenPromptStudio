@@ -94,7 +94,7 @@ app.delete('/api/dictionary', async (req, res) => {
     
     // await connection.query(
     //     'DELETE FROM ai_dictionary WHERE Text = ? ', 
-    //     [Text as string], 
+    //     [Text], 
     //     (err, results) => {
     //     if (err) {
     //         console.error(err);
@@ -106,14 +106,13 @@ app.delete('/api/dictionary', async (req, res) => {
     // });
 
     try {
-        const results = await connection.query(
-            'DELETE FROM ai_dictionary WHERE Text = ? ', 
-            [Text as string], );
-        console.log("Data delete successfully");
-        await res.status(200).json({message: 'Data delete successfully'});
+        let result = await connection.query('DELETE FROM ai_dictionary WHERE Text = ?', [Text]);
+        console.log('Data delete successfully');
+        // console.log(result);
+        res.status(200).json({message: 'Data delete successfully'});
     } catch (err) {
         console.error(err);
-        await res.status(500).json({message: 'Internal server error'});
+        res.status(500).json({message: 'Internal server error'});
     }
 });
 
