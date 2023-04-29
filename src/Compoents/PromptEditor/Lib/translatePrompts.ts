@@ -34,6 +34,7 @@ export async function translatePrompts(testList: string[], options?: { server?: 
                     let index = reqList[i][1]
                     resultList[index].push(text)
                     cache[raw] = text
+                    if (!cache[text]) cache[text] = raw
                 }
             })
             return resultList.map((x) => x[1])

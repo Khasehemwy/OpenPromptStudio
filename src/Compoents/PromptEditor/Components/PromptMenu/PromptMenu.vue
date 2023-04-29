@@ -60,7 +60,7 @@
 <script>
 import { useClipboard } from "@vueuse/core"
 
-let { copy } = useClipboard()
+let { copy } = useClipboard({ legacy: true })
 export default {
     mounted() {
         this.$nextTick(() => {})

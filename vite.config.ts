@@ -1,11 +1,12 @@
 import { defineConfig } from "vite"
 import vue from "@vitejs/plugin-vue2"
 import legacy from "@vitejs/plugin-legacy"
-import fs from "fs"
 import path from "path"
 import { resolve } from "path"
 import progress from "vite-plugin-progress"
 import * as process from "process"
+import * as dotenv from "dotenv"
+dotenv.config()
 
 // https://vitejs.dev/config/
 let config = {
@@ -13,6 +14,7 @@ let config = {
     base: "/apps/ops/",
     server: {
         port: 12833,
+        host: "0.0.0.0",
     },
     worker: {
         format: "es",
@@ -39,6 +41,9 @@ let config = {
             "@rc": path.resolve(__dirname, "../../Sub/richang/src"),
             "@/": path.resolve(__dirname, "../../Old/moonvy-web/src/"),
         },
+    },
+    define: {
+        "process.env.LOCAL_TRANSLATE_HOST": `"${process.env.LOCAL_TRANSLATE_HOST}"` || "false",
     },
 }
 // ------------- [vite build] ------------
