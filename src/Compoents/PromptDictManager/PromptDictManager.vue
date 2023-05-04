@@ -122,6 +122,15 @@ export default Vue.extend( {
             
             let ret = '无响应';
             
+            if(!deleteKey && (!this.text || !this.dir)){
+                ret = "⚠⚠⚠ 添加时Text和Dir不能为空";
+                return ret;
+            }
+            if (deleteKey && (!this.text)) {
+                ret = "⚠⚠⚠ 删除时Text不能为空";
+                return ret;
+            }
+            
             if(!deleteKey){
                 await axios.post('http://10.4.76.47:3000/api/dictionary', {
                     Text: this.text,
