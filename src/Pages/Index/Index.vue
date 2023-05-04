@@ -5,13 +5,15 @@
             <a class="icon-link" href="https://github.com/Moonvy/OpenPromptStudio" target="_blank">
                 <Icon icon="radix-icons:github-logo"
             /></a><a class="logo">神魔2自定义版本</a>
-
-            <div class="dict-button-box" @click="toggleDictManager()">
-                管理词典
-            </div>
-            <div class="dict-button-box" @click="toggleDictPad()">
-                提示词词典
-                <button class="icon dict-button"><Icon icon="mingcute:book-4-fill" /></button>
+            
+            <div class="dict-button-box" >
+                <div @click="toggleDictPad()">
+                    提示词词典
+                    <button class="icon dict-button"><Icon icon="mingcute:book-4-fill" /></button>
+                </div>
+                <div @click="toggleDictManager()">
+                    管理词典
+                </div>
             </div>
         </nav>
         <PromptEditor ref="PromptEditor" :init-prompts="initPrompts" />
@@ -86,6 +88,8 @@
             text-shadow: 0 1px 1px #ffffff;
             margin-right: 40px;
             cursor: pointer;
+            gap: 10px;
+            flex-direction: column;
         }
         .dict-button {
             color: #6161b7;

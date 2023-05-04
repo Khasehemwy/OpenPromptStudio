@@ -12,36 +12,36 @@
                 {{ notionName ?? (loading ? "连接中..." : "连接 WebOffice") }}
             </button>
 
-            <div class="notion-config">
-                <div class="help">
-<!--                    <Icon icon="ant-design:question-circle-outlined" />-->
-<!--                    <a-->
-<!--                        target="_blank"-->
-<!--                        href="https://github.com/Moonvy/OpenPromptStudio#2-%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84-noiton-%E9%9B%86%E6%88%90%E6%8F%92%E4%BB%B6integrations"-->
-<!--                        >使用方法</a-->
-<!--                    >-->
-                </div>
-                <div class="line checkbox">
-                    <label for="enableNotion">启用数据库</label>
-                    <input id="enableNotion" v-model="enableMyNotion" type="checkbox" />
-                </div>
-<!--                <div class="line"><label>Integration Token</label> <input v-model="apiKey" type="text" /></div>-->
-<!--                <div class="line"><label>Database ID </label> <input v-model="databaseId" type="text" /></div>-->
-<!--                <div class="line checkbox">-->
-<!--                    <label for="onlyMyNotion">仅使用此数据库 </label>-->
-<!--                    <input id="onlyMyNotion" v-model="onlyMyNotion" type="checkbox" />-->
-<!--                    <div class="desc">忽略默认词典</div>-->
+<!--            <div class="notion-config">-->
+<!--                <div class="help">-->
+<!--&lt;!&ndash;                    <Icon icon="ant-design:question-circle-outlined" />&ndash;&gt;-->
+<!--&lt;!&ndash;                    <a&ndash;&gt;-->
+<!--&lt;!&ndash;                        target="_blank"&ndash;&gt;-->
+<!--&lt;!&ndash;                        href="https://github.com/Moonvy/OpenPromptStudio#2-%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84-noiton-%E9%9B%86%E6%88%90%E6%8F%92%E4%BB%B6integrations"&ndash;&gt;-->
+<!--&lt;!&ndash;                        >使用方法</a&ndash;&gt;-->
+<!--&lt;!&ndash;                    >&ndash;&gt;-->
 <!--                </div>-->
-                <div class="line buttons">
-                    <button
-                        class="full"
-                        :class="{ disabled: !notioConfigActive || loading || !enableMyNotion }"
-                        @click="reloadData()"
-                    >
-                        {{ loading ? "载入中..." : "刷新" }}
-                    </button>
-                </div>
-            </div>
+<!--                <div class="line checkbox">-->
+<!--                    <label for="enableNotion">启用数据库</label>-->
+<!--                    <input id="enableNotion" v-model="enableMyNotion" type="checkbox" />-->
+<!--                </div>-->
+<!--&lt;!&ndash;                <div class="line"><label>Integration Token</label> <input v-model="apiKey" type="text" /></div>&ndash;&gt;-->
+<!--&lt;!&ndash;                <div class="line"><label>Database ID </label> <input v-model="databaseId" type="text" /></div>&ndash;&gt;-->
+<!--&lt;!&ndash;                <div class="line checkbox">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <label for="onlyMyNotion">仅使用此数据库 </label>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <input id="onlyMyNotion" v-model="onlyMyNotion" type="checkbox" />&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div class="desc">忽略默认词典</div>&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--                <div class="line buttons">-->
+<!--                    <button-->
+<!--                        class="full"-->
+<!--                        :class="{ disabled: !notioConfigActive || loading || !enableMyNotion }"-->
+<!--                        @click="reloadData()"-->
+<!--                    >-->
+<!--                        {{ loading ? "载入中..." : "刷新" }}-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
 
         <div class="dir-buttons" v-if="dict">
@@ -315,6 +315,7 @@ export default {
         if (this.notioConfigActive) {
             this.reloadData()
         }
+        this.reloadData()
     },
     methods: {
         loadData() {

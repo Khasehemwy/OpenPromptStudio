@@ -1,31 +1,69 @@
 ﻿<template>
     <div class="input-container">
-        <input type="text" v-model="text" placeholder="Text（关键字）">
-        <input type="text" v-model="lang_zh" placeholder="Lang_zh（中文翻译）">
-<!--        <input type="text" v-model="subType" placeholder="SubType">-->
-        <input type="text" v-model="dir" placeholder="Dir（词典文件夹。用'/'创建子分类，如'风格/绘画'）">
-        <input type="text" v-model="alias" placeholder="Alias（别名）">
-        <select v-model="subType">
-            <option value="normal">subType：普通</option>
-            <option value="style">subType：风格</option>
-            <option value="quality">subType：质量</option>
-            <option value="command">subType：命令</option>
-            <option value="eg">subType：负面</option>
-        </select>
+        <div class="form-input">
+            <label>Text:</label>
+            <input type="text" v-model="text" placeholder="提示词">
+        </div>
+        <div class="form-input">
+            <label>Lang_zh:</label>
+            <input type="text" v-model="lang_zh" placeholder="中文翻译">
+        </div>
+        <div class="form-input">
+            <label>Dir:</label>
+            <input type="text" v-model="dir" placeholder="词典文件夹。用'/'创建子分类，如'风格/绘画'">
+        </div>
+        <div class="form-input">
+            <label>Alias:</label>
+            <input type="text" v-model="alias" placeholder="别名">
+        </div>
+        <div class="form-input">
+            <label>SubType:</label>
+            <select v-model="subType">
+                <option value="normal">普通</option>
+                <option value="style">风格</option>
+                <option value="quality">质量</option>
+                <option value="command">命令</option>
+                <option value="eg">负面</option>
+            </select>
+        </div>
         <div class="button-container">
             <button @click="AddItem(true)">添加/更新</button>
-            <button @click="RemoveItem(true)">删除（只需要输入Text（关键字））</button>
+            <button @click="RemoveItem(true)">删除（只需要输入Text（提示词））</button>
         </div>
     </div>
 </template>
 
 <style>
+.form-input {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
+
+.form-input label {
+    display: flex;
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
+.form-input input[type="text"],
+.form-input select {
+    flex: 1;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    padding: 8px;
+}
+
 .input-container {
+    font-family: "JetBrains Mono";
     display: flex;
     flex-direction: column;
+    margin-bottom: 10px;
 }
 
 .button-container {
+    font-family: "JetBrains Mono";
     display: flex;
     flex-direction: column;
     justify-content: center;

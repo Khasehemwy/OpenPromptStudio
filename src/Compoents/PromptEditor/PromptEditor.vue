@@ -191,7 +191,6 @@
 </style>
 <script>
 import { LOCAL_TRANSLATE_SERVER, PromptEditorClass } from "./PromptEditorClass"
-import { PromptEditorClass } from "./PromptEditorClass"
 import PromptWork from "./Components/PromptWork/PromptWork.vue"
 import { dndInit } from "./Lib/DnD"
 import { useClipboard } from "@vueuse/core"

@@ -153,7 +153,7 @@ export async function fetchFromNotion(options: { apiKey: string; databaseId: str
 
     console.log(`[data] outside import ${Object.keys(defineMap).length} items.`)
     let me = {
-        name: "刷新数据库（悬停打开设置 / 点击刷新）",
+        name: "刷新数据库",
         url: "http://localhost:3000/api/dictionary",
     }
     return { defineMap, me }
