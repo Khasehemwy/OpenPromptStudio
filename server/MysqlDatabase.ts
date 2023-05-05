@@ -21,7 +21,7 @@ app.use(cors());
 app.use(express.json());
 
 // 创建数据库连接
-const connection = mysql.createConnection({
+const connection = mysql.createPool({
     host: '0.0.0.0',
     user: 'root',
     password: 'pwrd',
@@ -29,13 +29,13 @@ const connection = mysql.createConnection({
 });
 
 // 连接数据库
-connection.connect((err) => {
-    if (err) {
-        console.error('Error connecting to database: ' + err.stack);
-        return;
-    }
-    console.log('Connected to database as id ' + connection.threadId);
-});
+// connection.connect((err) => {
+//     if (err) {
+//         console.error('Error connecting to database: ' + err.stack);
+//         return;
+//     }
+//     console.log('Connected to database as id ' + connection.threadId);
+// });
 
 // 编辑 ai_dictionary 表
 app.post('/api/dictionary', async (req, res) => {
@@ -92,34 +92,34 @@ app.post('/api/dictionary', async (req, res) => {
 app.delete('/api/dictionary', async (req, res) => {
     const {Text} = req.body
     
-    // await connection.query(
-    //     'DELETE FROM ai_dictionary WHERE Text = ? ', 
-    //     [Text], 
-    //     (err, results) => {
-    //     if (err) {
-    //         console.error(err);
-    //         res.status(500).json({message: 'Internal server error'}).send();
-    //     } else {
-    //         console.log("Data delete successfully")
-    //         res.status(200).json({message: 'Data delete successfully'}).send();
-    //     }
-    // });
+    await connection.query(
+        'DELETE FROM ai_dictionary WHERE Text = ?', 
+        [Text], 
+        (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({message: 'Internal server error'}).send();
+        } else {
+            console.log("Data delete successfully")
+            res.status(200).json({message: 'Data delete successfully'}).send();
+        }
+    });
 
-    try {
-        let result = await connection.query('DELETE FROM ai_dictionary WHERE Text = ?', [Text]);
-        console.log('Data delete successfully');
-        // console.log(result);
-        res.status(200).json({message: 'Data delete successfully'});
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({message: 'Internal server error'});
-    }
+    // try {
+    //     let result = await connection.query('DELETE FROM ai_dictionary WHERE Text = ?', [Text]);
+    //     console.log('Data delete successfully');
+    //     // console.log(result);
+    //     res.status(200).json({message: 'Data delete successfully'});
+    // } catch (err) {
+    //     console.error(err);
+    //     res.status(500).json({message: 'Internal server error'});
+    // }
 });
 
 app.get('/api/dictionary', async (req, res) => {
 
     // try {
-    //     const results = await connection.query('SELECT JSON_OBJECT(\'Text\',Text,\'Lang_zh\',Lang_zh,\'SubType\',SubType,\'Dir\',Dir,\'Alias\',Alias) as data FROM ai_dictionary');
+    //     const results = await connection.promise().query('SELECT * FROM ai_dictionary');
     //     console.log("Data get successfully");
     //     res.status(200).json(results);
     // } catch (err) {
